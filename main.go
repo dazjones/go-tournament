@@ -28,14 +28,14 @@ func (i *Impl) InitSchema() {
 }
 
 type Tournament struct {
-    ID        uint `gorm:"primary_key"`
+	ID      uint     `gorm:"primary_key"`
 	Players []Player `json:"players" gorm:"many2many:tournament_players;"`
 }
 
 type Player struct {
-    ID        uint `gorm:"primary_key"`
-    SlackName string `json:"slack_name" gorm:"not null;unique"`
-    Name      string `json:"name" gorm:"not null"`
+	ID        uint   `gorm:"primary_key"`
+	SlackName string `json:"slack_name" gorm:"not null;unique"`
+	Name      string `json:"name" gorm:"not null"`
 }
 
 func main() {
@@ -49,8 +49,8 @@ func main() {
 	router, err := rest.MakeRouter(
 		rest.Get("/players", i.GetAllPlayers),
 		rest.Post("/players", i.PostPlayer),
-        rest.Get("/tournaments", i.GetAllTournaments),
-        rest.Post("/tournaments", i.PostTournament),
+		rest.Get("/tournaments", i.GetAllTournaments),
+		rest.Post("/tournaments", i.PostTournament),
 	)
 	if err != nil {
 		log.Fatal(err)
