@@ -28,14 +28,14 @@ func (i *Impl) InitSchema() {
 }
 
 type Tournament struct {
-	gorm.Model
+    ID        uint `gorm:"primary_key"`
 	Players []Player `json:"players" gorm:"many2many:tournament_players;"`
 }
 
 type Player struct {
-	gorm.Model
-	SlackName string
-	Name      string
+    ID        uint `gorm:"primary_key"`
+    SlackName string `json:"slack_name" gorm:"not null;unique"`
+    Name      string `json:"name" gorm:"not null"`
 }
 
 func main() {
@@ -49,6 +49,8 @@ func main() {
 	router, err := rest.MakeRouter(
 		rest.Get("/players", i.GetAllPlayers),
 		rest.Post("/players", i.PostPlayer),
+        rest.Get("/tournaments", i.GetAllTournaments),
+        rest.Post("/tournaments", i.PostTournament),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -75,4 +77,23 @@ func (i *Impl) PostPlayer(w rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	w.WriteJson(&player)
+}
+
+func (i *Impl) GetAllTournaments(w rest.ResponseWriter, r *rest.Request) {
+	tournaments := []Tournament{}
+	i.DB.Find(&tournaments)
+	w.WriteJson(&tournaments)
+}
+
+func (i *Impl) PostTournament(w rest.ResponseWriter, r *rest.Request) {
+	tournament := Tournament{}
+	if err := r.DecodeJsonPayload(&tournament); err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	if err := i.DB.Save(&tournament).Error; err != nil {
+		rest.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	w.WriteJson(&tournament)
 }
