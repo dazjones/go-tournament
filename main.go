@@ -47,6 +47,7 @@ func main() {
 	api := rest.NewApi()
 	api.Use(rest.DefaultDevStack...)
 	router, err := rest.MakeRouter(
+		rest.Get("/status", i.Status),
 		rest.Get("/players", i.GetAllPlayers),
 		rest.Post("/players", i.PostPlayer),
 		rest.Get("/tournaments", i.GetAllTournaments),
@@ -96,4 +97,8 @@ func (i *Impl) PostTournament(w rest.ResponseWriter, r *rest.Request) {
 		return
 	}
 	w.WriteJson(&tournament)
+}
+
+func (i *Impl) Status(w rest.ResponseWriter, r *rest.Request) {
+    w.WriteJson(map[string]string{"status": "OK"})
 }
