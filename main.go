@@ -52,6 +52,7 @@ func main() {
 		rest.Post("/players", i.PostPlayer),
 		rest.Get("/tournaments", i.GetAllTournaments),
 		rest.Post("/tournaments", i.PostTournament),
+		rest.Get("/", i.Home),
 	)
 	if err != nil {
 		log.Fatal(err)
@@ -59,6 +60,10 @@ func main() {
 	api.SetApp(router)
 	log.Fatal(http.ListenAndServe(":8080", api.MakeHandler()))
 
+}
+
+func (i *Impl) Home(w rest.ResponseWriter, r *rest.Request) {
+    w.WriteJson("go-tournament is up and running!")
 }
 
 func (i *Impl) GetAllPlayers(w rest.ResponseWriter, r *rest.Request) {
